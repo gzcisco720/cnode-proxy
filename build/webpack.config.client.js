@@ -1,14 +1,16 @@
 const path = require('path');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 
-module.exports = {
+const isDev = process.env.NODE_ENV === 'development';
+
+const config = {
     entry: {
         app: path.join(__dirname, '../client/app.js')
     },
     output: {
         filename: '[name].[hash].js',
         path: path.join(__dirname, '../dist'),
-        // publicPath: '/public'
+        publicPath: '/public'
     },
     module: {
         rules: [
@@ -26,6 +28,25 @@ module.exports = {
         ]
     },
     plugins: [
-        new HTMLWebpackPlugin()
+        new HTMLWebpackPlugin({
+            template: path.join(__dirname, '../client/template.html')
+        })
     ]
+};
+if(isDev) {
+    config.devServer = {
+        host: '0.0.0.0',
+        port: '8888',
+        contentBase: path.join(__dirname, '../dist'),
+        // hot: true,
+        overlay : {
+            errors: true
+        },
+        publicPath:'/public',
+        historyApiFallback: {
+            index: '/public/index.html'
+        }
+    };
 }
+
+module.exports = config;
