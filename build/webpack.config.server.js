@@ -7,7 +7,7 @@ module.exports = {
         app: path.join(__dirname, '../client/server-entry.js')
     },
     output: {
-        filename: 'server.js',
+        filename: 'server-entry.js',
         path: path.join(__dirname, '../dist'),
         publicPath: "/pubilc",
         libraryTarget: "commonjs2"
