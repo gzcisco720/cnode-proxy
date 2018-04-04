@@ -14,7 +14,8 @@ const config = webpackMerge(baseConfig, {
   },
   plugins: [
     new HTMLWebpackPlugin({
-      template: path.join(__dirname, '../client/template.html')
+      template: path.join(__dirname, '../client/template.html'),
+      favicon: path.join(__dirname, '../favicon.ico')
     })
   ]
 })
