@@ -8,9 +8,9 @@ export default class App extends React.Component {
   }
   render() {
     return [
-      <div>
+      <div key="navbar">
         <Link to="/">list</Link>
-        <Link to="/detail">list</Link>
+        <Link to="/detail">detail</Link>
       </div>,
       <Routes key="router" />,
     ];
