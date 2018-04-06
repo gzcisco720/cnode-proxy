@@ -5,10 +5,13 @@ const path = require('path')
 const MemoryFS = require('memory-fs')
 const ReactDomServer = require('react-dom/server')
 const proxy = require('http-proxy-middleware')
+const bootstrapper = require('react-async-bootstrapper')
+const ejs = require('ejs')
+const serialize = require('serialize-javascript')
 
 const getTemplate = () => {
   return new Promise((resolve, reject) => {
-    axios.get('http://localhost:8888/public/index.html')
+    axios.get('http://localhost:8888/public/server.ejs')
       .then((res) => {
         resolve(res.data)
       }).catch(reject)
@@ -20,7 +23,8 @@ serverConfig.mode = 'development'
 const serverCompiler = webpack(serverConfig)
 const Module = module.constructor
 serverCompiler.outputFileSystem = mfs
-let serverBundle
+
+let serverBundle, createStoreMap
 serverCompiler.watch({}, (err, stats) => {
   if (err) throw err
 
@@ -35,7 +39,15 @@ serverCompiler.watch({}, (err, stats) => {
   const m = new Module()
   m._compile(bundle, 'server-entry.js')
   serverBundle = m.exports.default
+  createStoreMap = m.exports.createStoreMap
 })
+
+const getStoreState = (stores) => {
+  return Object.keys(stores).reduce((result, storeName) => {
+    result[storeName] = stores[storeName].toJson()
+    return result
+  }, {})
+}
 
 module.exports = function (app) {
   app.use('/public', proxy({
@@ -43,8 +55,23 @@ module.exports = function (app) {
   }))
   app.get('*', function (req, res) {
     getTemplate().then((template) => {
-      const content = ReactDomServer.renderToString(serverBundle)
-      res.send(template.replace('<!--app-->', content))
+      const routerContext = {}
+      const stores = createStoreMap()
+      const app = serverBundle(stores, routerContext, req.url)
+      bootstrapper(app).then(() => {
+        const content = ReactDomServer.renderToString(app)
+        if (routerContext.url) {
+          res.status(302).setHeader('Location', routerContext.url)
+          res.end()
+          return
+        }
+        const state = getStoreState(stores)
+        const html = ejs.render(template, {
+          appString: content,
+          initialState: serialize(state)
+        })
+        res.send(html)
+      })
     })
   })
 }

@@ -16,6 +16,10 @@ const config = webpackMerge(baseConfig, {
     new HTMLWebpackPlugin({
       template: path.join(__dirname, '../client/template.html'),
       favicon: path.join(__dirname, '../favicon.ico')
+    }),
+    new HTMLWebpackPlugin({
+      template: '!!ejs-compiled-loader!' + path.join(__dirname, '../client/server.template.ejs'),
+      filename: 'server.ejs'
     })
   ]
 })
@@ -38,6 +42,9 @@ if (isDev) {
     publicPath: '/public/',
     historyApiFallback: {
       index: '/public/index.html'
+    },
+    proxy: {
+      '/api': 'http://localhost:3333'
     }
   }
   config.plugins.push(new webpack.HotModuleReplacementPlugin())
