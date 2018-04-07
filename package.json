@@ -11,7 +11,8 @@
     "clear": "rimraf dist",
     "build": "npm run clear && npm run build:client && npm run build:server",
     "dev:server": "nodemon server/server.js",
-    "dev:client": "cross-env NODE_ENV=development webpack-dev-server --mode development --config build/webpack.config.client.js"
+    "dev:client": "cross-env NODE_ENV=development webpack-dev-server --mode development --config build/webpack.config.client.js",
+    "start": "cross-env NODE_ENV=production node server/server.js"
   },
   "repository": {
     "type": "git",

@@ -3,12 +3,8 @@ const webpack = require('webpack')
 const serverConfig = require('../../build/webpack.config.server')
 const path = require('path')
 const MemoryFS = require('memory-fs')
-const ReactDomServer = require('react-dom/server')
 const proxy = require('http-proxy-middleware')
-const bootstrapper = require('react-async-bootstrapper')
-const ejs = require('ejs')
-const serialize = require('serialize-javascript')
-const Helmet = require('react-helmet').default
+const serverRunder = require('./server-render')
 
 const getTemplate = () => {
   return new Promise((resolve, reject) => {
@@ -38,7 +34,7 @@ serverConfig.mode = 'development'
 const serverCompiler = webpack(serverConfig)
 serverCompiler.outputFileSystem = mfs
 
-let serverBundle, createStoreMap
+let serverBundle
 serverCompiler.watch({}, (err, stats) => {
   if (err) throw err
 
@@ -51,45 +47,19 @@ serverCompiler.watch({}, (err, stats) => {
   )
   const bundle = mfs.readFileSync(bundlePath, 'utf-8')
   const m = getModuleFromString(bundle, 'server-entry.js')
-  serverBundle = m.exports.default
-  createStoreMap = m.exports.createStoreMap
+  serverBundle = m.exports
 })
-
-const getStoreState = (stores) => {
-  return Object.keys(stores).reduce((result, storeName) => {
-    result[storeName] = stores[storeName].toJson()
-    return result
-  }, {})
-}
 
 module.exports = function (app) {
   app.use('/public', proxy({
     target: 'http://localhost:8888'
   }))
-  app.get('*', function (req, res) {
+  app.get('*', function (req, res, next) {
+    if (!serverBundle) {
+      return res.send('refresh later')
+    }
     getTemplate().then((template) => {
-      const routerContext = {}
-      const stores = createStoreMap()
-      const app = serverBundle(stores, routerContext, req.url)
-      bootstrapper(app).then(() => {
-        const content = ReactDomServer.renderToString(app)
-        if (routerContext.url) {
-          res.status(302).setHeader('Location', routerContext.url)
-          res.end()
-          return
-        }
-        const helmet = Helmet.rewind()
-        const state = getStoreState(stores)
-        const html = ejs.render(template, {
-          appString: content,
-          initialState: serialize(state),
-          title: helmet.title.toString(),
-          meta: helmet.meta.toString(),
-          style: helmet.style.toString(),
-          link: helmet.link.toString()
-        })
-        res.send(html)
-      })
-    })
+      return serverRunder(serverBundle, template, req, res)
+    }).catch(next)
   })
 }
