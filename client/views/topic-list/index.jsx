@@ -2,6 +2,8 @@ import React from 'react';
 import { observer, inject } from 'mobx-react';
 import Proptypes from 'prop-types';
 import { AppState } from '../../store/app-state';
+import Helmet from 'react-helmet';
+
 @inject('appState')
 @observer
 export default class TopicList extends React.Component {
@@ -17,7 +19,14 @@ export default class TopicList extends React.Component {
     });
   }
   render() {
-    return <div key="listTopic">{this.props.appState.msg}</div>;
+    return (
+      <div>
+        <Helmet>
+          <title>Topic List</title>
+        </Helmet>
+        <div key="listTopic">{this.props.appState.msg}</div>
+      </div>
+    );
   }
 }
 
