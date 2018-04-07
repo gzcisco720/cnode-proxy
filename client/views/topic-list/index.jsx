@@ -3,6 +3,7 @@ import { observer, inject } from 'mobx-react';
 import Proptypes from 'prop-types';
 import { AppState } from '../../store/app-state';
 import Helmet from 'react-helmet';
+import Button from 'material-ui/Button';
 
 @inject('appState')
 @observer
@@ -24,6 +25,7 @@ export default class TopicList extends React.Component {
         <Helmet>
           <title>Topic List</title>
         </Helmet>
+        <Button color="primary" variant="raised">Button</Button>
         <div key="listTopic">{this.props.appState.msg}</div>
       </div>
     );
