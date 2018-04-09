@@ -1,6 +1,7 @@
 import React from 'react';
 import Routes from '../config/router';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
+import NavBar from './layout/app-bar';
 
 export default class App extends React.Component {
   componentDidMount() {
@@ -8,10 +9,7 @@ export default class App extends React.Component {
   }
   render() {
     return [
-      <div key="navbar">
-        <Link to="/">list</Link>
-        <Link to="/detail">detail</Link>
-      </div>,
+      <NavBar key="appBar" />,
       <Routes key="router" />,
     ];
   }

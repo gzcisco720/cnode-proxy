@@ -34,7 +34,7 @@ if (isDev) {
   config.devServer = {
     host: '0.0.0.0',
     port: '8888',
-    contentBase: path.join(__dirname, '../dist'),
+    // contentBase: path.join(__dirname, '../dist'),
     hot: true,
     overlay: {
       errors: true
@@ -47,7 +47,7 @@ if (isDev) {
       '/api': 'http://localhost:3333'
     }
   }
-  config.plugins.push(new webpack.HotModuleReplacementPlugin())
+  config.plugins.push(new webpack.SourceMapDevToolPlugin(), new webpack.HotModuleReplacementPlugin())
 }
 
 module.exports = config
