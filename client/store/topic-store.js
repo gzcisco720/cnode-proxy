@@ -1,4 +1,4 @@
-import { observable, action, extendObservable } from 'mobx';
+import { observable, action, extendObservable, computed } from 'mobx';
 import { get } from '../util/http';
 import { topicSchema } from '../util/variable-define';
 
@@ -16,12 +16,20 @@ class Topic {
 export default class TopicStore {
   @observable topics;
   @observable syncing;
-  constructor({ topics, syncing } = { topics: [], syncing: false }) {
+  @observable details;
+  constructor({ topics = [], syncing = false, details = [] } = {}) {
     this.topics = topics.map(topic => new Topic(createTopic(topic)));
     this.syncing = syncing;
+    this.details = details.map(topic => new Topic(createTopic(topic)));
   }
   addTopic(topic) {
     this.topics.push(new Topic(createTopic(topic)));
+  }
+  @computed get detailMap() {
+    return this.details.reduce((result, detail) => {
+      result[detail.id] = detail;
+      return result;
+    }, {});
   }
   @action fetchTopics(tab) {
     this.syncing = true;
@@ -43,6 +51,25 @@ export default class TopicStore {
         reject(err);
         this.syncing = false;
       });
+    });
+  }
+  @action getTopicDetail(id) {
+    return new Promise((resolve, reject) => {
+      if (this.detailMap[id]) {
+        resolve(this.detailMap);
+      } else {
+        get(`/topic/${id}`, {
+          mdrender: false,
+        }).then((resp) => {
+          if (resp.success) {
+            const topic = new Topic(createTopic(resp.data));
+            this.details.push(topic);
+            resolve(topic);
+          } else {
+            reject();
+          }
+        }).catch(reject);
+      }
     });
   }
 }

@@ -8,6 +8,7 @@ import { withStyles } from 'material-ui/styles';
 import { topicPrimaryStyle, topicSecondaryStyle } from './styles';
 import { tabs } from '../../util/variable-define';
 import cx from 'classnames';
+import dateFormat from 'dateformat';
 
 const Primary = ({ classes, topic }) => {
   const classNames = cx({
@@ -36,7 +37,7 @@ const Secondary = ({ classes, topic }) => (
       <span className={classes.replyCount}>Reply: {topic.reply_count}</span>
       <span>Visiting: {topic.visit_count}</span>
     </span>
-    <span>Date: {topic.create_at}</span>
+    <span>Date: {dateFormat(topic.create_at, 'yy-mm-dd')}</span>
   </span>
 );
 
