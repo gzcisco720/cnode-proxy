@@ -30,12 +30,12 @@ export const replySchema = {
   is_uped: false,
 };
 export const tabs = {
+  all: 'All',
   share: 'Share',
   job: 'Job',
   ask: 'Q&A',
   good: 'Good',
   dev: 'Test',
-  all: 'All',
 };
 export default {
   replySchema,
