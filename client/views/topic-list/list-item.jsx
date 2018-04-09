@@ -23,13 +23,12 @@ const StyledPrimary = withStyles(topicPrimaryStyle)(Primary);
 
 const Secondary = ({ classes, topic }) => (
   <span className={classes.root}>
-    <span className={classes.userName}>{topic.username}</span>
+    <span className={classes.userName}>{topic.author.loginname}</span>
     <span className={classes.count}>
-      <span className={classes.replyCount}>{topic.reply_count}</span>
-      <span>/</span>
-      <span>{topic.visit_count}</span>
+      <span className={classes.replyCount}>Reply: {topic.reply_count}</span>
+      <span>Visiting: {topic.visit_count}</span>
     </span>
-    <span>{topic.create_at}</span>
+    <span>Date: {topic.create_at}</span>
   </span>
 );
 
@@ -43,7 +42,7 @@ const StyledSecondary = withStyles(topicSecondaryStyle)(Secondary);
 const TopicListItem = ({ onClick, topic }) => (
   <ListItem button onClick={onClick}>
     <ListItemAvatar>
-      <Avatar src={topic.image} />
+      <Avatar src={topic.author.avatar_url} />
     </ListItemAvatar>
     <ListItemText
       primary={<StyledPrimary topic={topic} />}
