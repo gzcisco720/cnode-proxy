@@ -17,21 +17,26 @@ const getStoreState = (stores) => {
 }
 
 module.exports = (bundle, template, req, res) => {
+  const createStoreMap = bundle.createStoreMap
+  const serverBundle = bundle.default
+  const routerContext = {}
+  const stores = createStoreMap()
+  const user = req.session.user
+  if (user) {
+    stores.appState.user.isLogin = true
+    stores.appState.user.info = user
+  }
+  const sheetsRegistry = new SheetsRegistry()
+  const theme = createMuiTheme({
+    palette: {
+      primary: colors.blue,
+      secondary: colors.pink,
+      type: 'light'
+    }
+  })
+  const generateClassName = createGenerateClassName()
+  const app = serverBundle(stores, routerContext, sheetsRegistry, generateClassName, theme, req.url)
   return new Promise((resolve, reject) => {
-    const createStoreMap = bundle.createStoreMap
-    const serverBundle = bundle.default
-    const routerContext = {}
-    const stores = createStoreMap()
-    const sheetsRegistry = new SheetsRegistry()
-    const theme = createMuiTheme({
-      palette: {
-        primary: colors.blue,
-        secondary: colors.pink,
-        type: 'light'
-      }
-    })
-    const generateClassName = createGenerateClassName()
-    const app = serverBundle(stores, routerContext, sheetsRegistry, generateClassName, theme, req.url)
     bootstrapper(app).then(() => {
       const content = ReactDomServer.renderToString(app)
       if (routerContext.url) {

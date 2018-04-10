@@ -42,10 +42,17 @@ export default class TopicStore {
   @observable syncing;
   @observable details;
   @observable createdTopic = [];
-  constructor({ topics = [], syncing = false, details = [] } = {}) {
+  @observable tab;
+  constructor({
+    topics = [],
+    syncing = false,
+    details = [],
+    tab = null,
+  } = {}) {
     this.topics = topics.map(topic => new Topic(createTopic(topic)));
     this.syncing = syncing;
     this.details = details.map(topic => new Topic(createTopic(topic)));
+    this.tab = tab;
   }
   @computed get detailMap() {
     return this.details.reduce((result, detail) => {
@@ -54,26 +61,32 @@ export default class TopicStore {
     }, {});
   }
   @action fetchTopics(tab) {
-    this.syncing = true;
-    this.topics = [];
     return new Promise((resolve, reject) => {
-      get('/topics', {
-        mdrender: false,
-        tab,
-      }).then((resp) => {
-        if (resp.success) {
-          this.topics = resp.data.map((topic) => {
-            return new Topic(createTopic(topic));
-          });
-        } else {
-          reject();
-        }
-        this.syncing = false;
-      }).catch((err) => {
-        console.log(err);//eslint-disable-line
-        reject(err);
-        this.syncing = false;
-      });
+      if (tab === this.tab && this.topics.length > 0) {
+        resolve();
+      } else {
+        this.tab = tab;
+        this.syncing = true;
+        this.topics = [];
+        get('/topics', {
+          mdrender: false,
+          tab,
+        }).then((resp) => {
+          if (resp.success) {
+            this.topics = resp.data.map((topic) => {
+              return new Topic(createTopic(topic));
+            });
+            resolve();
+          } else {
+            reject();
+          }
+          this.syncing = false;
+        }).catch((err) => {
+          console.log(err);//eslint-disable-line
+          reject(err);
+          this.syncing = false;
+        });
+      }
     });
   }
   @action getTopicDetail(id) {
@@ -123,6 +136,7 @@ export default class TopicStore {
       topics: toJS(this.topics),
       syncing: this.syncing,
       details: toJS(this.details),
+      tab: this.tab,
     };
   }
 }

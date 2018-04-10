@@ -15,6 +15,11 @@ export default class AppState {
       list: [],
     },
   };
+  init({ user }) {
+    if (user) {
+      this.user = user;
+    }
+  }
   @action login(accessToken) {
     return new Promise((resolve, reject) => {
       post('/user/login', {}, {
