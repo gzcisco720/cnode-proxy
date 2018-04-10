@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ListItem from 'material-ui/List/ListItem';
-import ListItemAvatar from 'material-ui/List/ListItemAvatar';
+// import ListItemAvatar from 'material-ui/List/ListItemAvatar';
 import ListItemText from 'material-ui/List/ListItemText';
-import Avatar from 'material-ui/Avatar';
+// import Avatar from 'material-ui/Avatar';
 import { withStyles } from 'material-ui/styles';
 import { topicPrimaryStyle, topicSecondaryStyle } from './styles';
 import { tabs } from '../../util/variable-define';
@@ -50,9 +50,9 @@ const StyledSecondary = withStyles(topicSecondaryStyle)(Secondary);
 
 const TopicListItem = ({ onClick, topic }) => (
   <ListItem button onClick={onClick}>
-    <ListItemAvatar>
+    {/* <ListItemAvatar>
       <Avatar src={topic.author.avatar_url} />
-    </ListItemAvatar>
+    </ListItemAvatar> */}
     <ListItemText
       primary={<StyledPrimary topic={topic} />}
       secondary={<StyledSecondary topic={topic} />}
