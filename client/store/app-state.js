@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx';
+import { observable, action, toJS } from 'mobx';
 import { post, get } from '../util/http';
 
 export default class AppState {
@@ -66,5 +66,10 @@ export default class AppState {
           reject(err);
         });
     });
+  }
+  toJson() {
+    return {
+      user: toJS(this.user),
+    };
   }
 }

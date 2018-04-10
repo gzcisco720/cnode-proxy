@@ -1,4 +1,4 @@
-import { observable, action, extendObservable, computed } from 'mobx';
+import { observable, action, extendObservable, computed, toJS } from 'mobx';
 import { get, post } from '../util/http';
 import { topicSchema, replySchema } from '../util/variable-define';
 
@@ -47,9 +47,6 @@ export default class TopicStore {
     this.syncing = syncing;
     this.details = details.map(topic => new Topic(createTopic(topic)));
   }
-  addTopic(topic) {
-    this.topics.push(new Topic(createTopic(topic)));
-  }
   @computed get detailMap() {
     return this.details.reduce((result, detail) => {
       result[detail.id] = detail;
@@ -65,14 +62,15 @@ export default class TopicStore {
         tab,
       }).then((resp) => {
         if (resp.success) {
-          resp.data.forEach((topic) => {
-            this.addTopic(topic);
+          this.topics = resp.data.map((topic) => {
+            return new Topic(createTopic(topic));
           });
         } else {
           reject();
         }
         this.syncing = false;
       }).catch((err) => {
+        console.log(err);//eslint-disable-line
         reject(err);
         this.syncing = false;
       });
@@ -119,5 +117,12 @@ export default class TopicStore {
         }
       }).catch(reject);
     });
+  }
+  toJson() {
+    return {
+      topics: toJS(this.topics),
+      syncing: this.syncing,
+      details: toJS(this.details),
+    };
   }
 }
