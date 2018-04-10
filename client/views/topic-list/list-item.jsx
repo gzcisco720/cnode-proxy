@@ -50,7 +50,7 @@ const StyledSecondary = withStyles(topicSecondaryStyle)(Secondary);
 
 const TopicListItem = ({ onClick, topic }) => (
   <ListItem button onClick={onClick}>
-    <ListItemAvatar id="listItemAvatar">
+    <ListItemAvatar>
       <Avatar src={topic.author.avatar_url} />
     </ListItemAvatar>
     <ListItemText
