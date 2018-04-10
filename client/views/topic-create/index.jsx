@@ -112,6 +112,7 @@ class TopicCreate extends React.Component {
             fullWidth
           />
           <SimpleMDE
+            id="samplemdeCreateTopic"
             onChange={this.handleContentChange}
             value={this.state.content}
             options={{
