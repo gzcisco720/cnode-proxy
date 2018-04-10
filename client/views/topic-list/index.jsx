@@ -73,25 +73,31 @@ export default class TopicList extends React.Component {
         <Helmet>
           <title>Topic List</title>
         </Helmet>
-        <Tabs value={tab} onChange={this.onTabChange}>
-          {
-            Object.keys(tabs).map(tabKey => (
-              <Tab key={tabKey} label={tabs[tabKey]} value={tabKey} />
-            ))
-          }
-        </Tabs>
-        <List>
-          {
-            createdTopic.map((topic) => {
-              topic = Object.assign({}, topic, {
-                author: user.info,
-              });
-              return (
-                <TopicListItem key={topic.id} onClick={() => { this.onListItemClick(topic); }} topic={topic} />
-              );
-            })
-          }
-        </List>
+        <div>
+          <Tabs value={tab} onChange={this.onTabChange}>
+            {
+              Object.keys(tabs).map(tabKey => (
+                <Tab key={tabKey} label={tabs[tabKey]} value={tabKey} />
+              ))
+            }
+          </Tabs>
+        </div>
+        {
+          createdTopic && createdTopic.length > 0 ?
+            <List>
+              {
+                createdTopic.map((topic) => {
+                  topic = Object.assign({}, topic, {
+                    author: user.info,
+                  });
+                  return (
+                    <TopicListItem key={topic.id} onClick={() => { this.onListItemClick(topic); }} topic={topic} />
+                  );
+                })
+              }
+            </List> :
+            null
+        }
         <List>
           {
             topicList.map(topic => (
