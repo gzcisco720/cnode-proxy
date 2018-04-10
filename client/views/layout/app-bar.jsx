@@ -36,7 +36,7 @@ class NavBar extends React.Component {
     this.context.router.history.push('/list?tab=all');
   }
   onCreateTopicButtonClick() {
-    console.log(this);// eslint-disable-line
+    this.context.router.history.push('/topic/create');
   }
   onLoginButtonClick() {
     if (this.props.appState.user.isLogin) {
