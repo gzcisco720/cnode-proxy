@@ -1,5 +1,9 @@
 # Cnode Proxy
 
+# Notic
+
+If error happened, when you run `npm install`. Please check whether your Nodejs version is 10.x.x. If it is, you can either downgrade to 9.11.0 or upgrade to 11.x.x.
+
 ## About this app
 
 This is a proxy app built up by using [Cnode](https://cnodejs.org/) public API, and this app are built totlly from scratch without any CLI and project generation tool. Everything is configurable based on your own idea.
