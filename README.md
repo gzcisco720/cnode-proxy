@@ -1,4 +1,4 @@
-# Cnode Proxy
+# Cnode Proxy is being rebuild now. Due to packages version issue, this code base is for reference only.
 
 # Notic
 
